@@ -46,9 +46,13 @@ def build_server_config() -> Dict[str, Dict[str, object]]:
     if wolfram_cfg:
         servers["wolfram_alpha"] = wolfram_cfg
 
+    whois_cfg = _sse_server("MCP_WHOIS_SSE_URL") or _stdio_server("MCP_WHOIS_CMD")
+    if whois_cfg:
+        servers["whois"] = whois_cfg
+
     if not servers:
         raise RuntimeError(
-            "No MCP servers configured. Set MCP_WIKIPEDIA_* or MCP_WOLFRAM_* variables."
+            "No MCP servers configured. Set MCP_WIKIPEDIA_*, MCP_WOLFRAM_*, or MCP_WHOIS_* variables."
         )
 
     return servers
@@ -59,8 +63,17 @@ async def load_mcp_tools() -> List[object]:
     servers = build_server_config()
     client = MultiServerMCPClient(servers)
     tools = await client.get_tools()
-    print(f"Loaded {len(tools)} MCP tools: {[tool.name for tool in tools]}")
-    return tools
+
+    # Skip known-broken tools until upstream servers implement them correctly.
+    # Some community servers advertise tools that are not implemented (e.g., wiki.search/onThisDay).
+    skip = {"onThisDay", "findPage"}
+    filtered_tools = [tool for tool in tools if tool.name not in skip]
+    if len(filtered_tools) != len(tools):
+        skipped = sorted({tool.name for tool in tools} - {tool.name for tool in filtered_tools})
+        print(f"Skipping tools with known issues: {skipped}")
+
+    print(f"Loaded {len(filtered_tools)} MCP tools: {[tool.name for tool in filtered_tools]}")
+    return filtered_tools
 
 
 async def main() -> int:
