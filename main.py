@@ -63,17 +63,8 @@ async def load_mcp_tools() -> List[object]:
     servers = build_server_config()
     client = MultiServerMCPClient(servers)
     tools = await client.get_tools()
-
-    # Skip known-broken tools until upstream servers implement them correctly.
-    # Some community servers advertise tools that are not implemented (e.g., wiki.search/onThisDay).
-    skip = {"onThisDay", "findPage"}
-    filtered_tools = [tool for tool in tools if tool.name not in skip]
-    if len(filtered_tools) != len(tools):
-        skipped = sorted({tool.name for tool in tools} - {tool.name for tool in filtered_tools})
-        print(f"Skipping tools with known issues: {skipped}")
-
-    print(f"Loaded {len(filtered_tools)} MCP tools: {[tool.name for tool in filtered_tools]}")
-    return filtered_tools
+    print(f"Loaded {len(tools)} MCP tools: {[tool.name for tool in tools]}")
+    return tools
 
 
 async def main() -> int:

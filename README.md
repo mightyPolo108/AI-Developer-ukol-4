@@ -8,7 +8,6 @@ LangGraph agent that routes questions to MCP tools for Wikipedia (facts) and Wol
   - Set `MCP_WIKIPEDIA_CMD` to a runnable Wikipedia MCP server (e.g., `npx -y @shelm/wikipedia-mcp-server`) **or** set `MCP_WIKIPEDIA_SSE_URL` to an existing SSE endpoint.
   - Set `MCP_WOLFRAM_CMD` to a runnable Wolfram MCP server **or** set `MCP_WOLFRAM_SSE_URL` to an existing SSE endpoint. You also need `WOLFRAM_ALPHA_APPID` if that server requires it.
   - Set `MCP_WHOIS_CMD` to a WHOIS MCP server (e.g., `npx -y @modelcontextprotocol/server-whois`) **or** set `MCP_WHOIS_SSE_URL` to an existing SSE endpoint.
-  - Some Wikipedia servers advertise tools that are missing (`onThisDay`, `findPage`/`wiki.search`). The app skips those; upgrade your server if you need them.
 
 If the npm package you try (e.g., `@modelcontextprotocol/server-wolfram-alpha`) is not on the registry, use a local clone/binary or an SSE URL instead.
 
